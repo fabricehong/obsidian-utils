@@ -9,7 +9,13 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "obsidian": "latest"
+    "obsidian": "latest",
+    "zod": "^3.22.4",
+    "@langchain/core": "^0.1.17",
+    "@langchain/openai": "^0.0.14",
+    "@langchain/deepseek": "^0.0.3",
+    "@langchain/groq": "^0.0.3",
+    "@langchain/google-genai": "^0.0.7"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
