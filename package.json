@@ -1,0 +1,17 @@
+{
+  "name": "obsidian-llm-utils",
+  "version": "1.0.0",
+  "description": "Shared utilities for Obsidian LLM plugins",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "obsidian": "latest"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
