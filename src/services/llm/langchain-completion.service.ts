@@ -1,31 +1,16 @@
 import { Notice } from "obsidian";
-import { AICompletionService, LLMContext } from "../interfaces/ai-completion.interface";
-import { ModelFactory } from "./model.factory";
+import { AICompletionService } from "../interfaces/ai-completion.interface";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { HumanMessage, SystemMessage, AIMessage } from "@langchain/core/messages";
 import { z } from 'zod';
 
 export class LangChainCompletionService implements AICompletionService {
-    private model: BaseChatModel | undefined;
+    private readonly model: BaseChatModel;
     private readonly debug: boolean;
-    private readonly currentModel: string;
 
-    constructor(context: LLMContext, debug: boolean = false) {
+    constructor(model: BaseChatModel, debug: boolean = false) {
+        this.model = model;
         this.debug = debug;
-        this.currentModel = context.configuration.model;
-
-        if (!context.organization.apiKey || context.organization.apiKey.trim() === '') {
-            this.model = undefined;
-            return;
-        }
-
-        try {
-            console.log(`organization: ${context.organization.name}`);
-            this.model = ModelFactory.createModel(context.organization, this.currentModel);
-        } catch (error) {
-            console.error('Error initializing model:', error);
-            this.model = undefined;
-        }
     }
 
     private log(...args: any[]) {
@@ -39,7 +24,7 @@ export class LangChainCompletionService implements AICompletionService {
             new Notice('LLM model not initialized. Please check your API key in the settings.');
             throw new Error('LLM model not initialized');
         }
-    }
+    } // Cette méthode reste pour compatibilité, mais le modèle est supposé toujours injecté correctement.
 
     private convertMessages(messages: Array<{role: 'system' | 'user' | 'assistant', content: string}>) {
         return messages.map(msg => {
