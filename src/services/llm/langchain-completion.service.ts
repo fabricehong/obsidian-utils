@@ -54,7 +54,7 @@ export class LangChainCompletionService implements AICompletionService {
             this.log('Messages:', langchainMessages);
             const result = await this.model!.invoke(langchainMessages);
             const content = result.content.toString();
-            
+
             if (!content) {
                 throw new Error('No content in response');
             }
@@ -84,7 +84,7 @@ export class LangChainCompletionService implements AICompletionService {
             // Utiliser withStructuredOutput avec le type générique
             const modelWithStructure = this.model!.withStructuredOutput<T>(schema);
             const result = await modelWithStructure.invoke(langchainMessages);
-            
+
             this.log('Response:', result);
 
             return result;
@@ -104,7 +104,7 @@ export class LangChainCompletionService implements AICompletionService {
             this.log('Messages:', langchainMessages);
             const result = await this.model!.invoke(langchainMessages);
             const content = result.content.toString();
-            
+
             if (!content) {
                 throw new Error('No content in response');
             }
