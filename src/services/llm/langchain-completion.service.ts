@@ -3,20 +3,27 @@ import { AICompletionService } from "../interfaces/ai-completion.interface";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { HumanMessage, SystemMessage, AIMessage } from "@langchain/core/messages";
 import { z } from 'zod';
+import type { LangChainTracer } from 'langchain/callbacks';
 
 export class LangChainCompletionService implements AICompletionService {
     private readonly model: BaseChatModel;
     private readonly debug: boolean;
+    private readonly tracer: LangChainTracer | undefined;
 
-    constructor(model: BaseChatModel, debug: boolean = false) {
+    constructor(model: BaseChatModel, debug: boolean = false, tracer?: LangChainTracer) {
         this.model = model;
         this.debug = debug;
+        this.tracer = tracer;
     }
 
     private log(...args: any[]) {
         if (this.debug) {
             console.log(...args);
         }
+    }
+
+    private getCallbacks() {
+        return this.tracer ? [this.tracer] : undefined;
     }
 
     private validateModel(): void {
@@ -45,14 +52,14 @@ export class LangChainCompletionService implements AICompletionService {
      * @deprecated Utiliser generateStructuredResponseWithSchema à la place
      */
     async generateStructuredResponse<T>(
-        messages: Array<{role: 'system' | 'user' | 'assistant', content: string}>,
+        messages: Array<{role: 'system' | 'user' | 'assistant', content: string}>
     ): Promise<T> {
         this.validateModel();
 
         try {
             const langchainMessages = this.convertMessages(messages);
             this.log('Messages:', langchainMessages);
-            const result = await this.model!.invoke(langchainMessages);
+            const result = await this.model!.invoke(langchainMessages, { callbacks: this.getCallbacks() });
             const content = result.content.toString();
 
             if (!content) {
@@ -83,8 +90,7 @@ export class LangChainCompletionService implements AICompletionService {
 
             // Utiliser withStructuredOutput avec le type générique
             const modelWithStructure = this.model!.withStructuredOutput<T>(schema);
-            const result = await modelWithStructure.invoke(langchainMessages);
-
+            const result = await modelWithStructure.invoke(langchainMessages, { callbacks: this.getCallbacks() });
             this.log('Response:', result);
 
             return result;
@@ -102,7 +108,7 @@ export class LangChainCompletionService implements AICompletionService {
         try {
             const langchainMessages = this.convertMessages(messages);
             this.log('Messages:', langchainMessages);
-            const result = await this.model!.invoke(langchainMessages);
+            const result = await this.model!.invoke(langchainMessages, { callbacks: this.getCallbacks() });
             const content = result.content.toString();
 
             if (!content) {
