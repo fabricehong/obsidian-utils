@@ -8,12 +8,12 @@
 # npm
 node_modules
 
-# Don't include the compiled main.js file in the repo.
-# They should be uploaded to GitHub releases instead.
-main.js
+# Compiled JavaScript files (submodule should not generate .js files)
+*.js
+*.js.map
 
-# Exclude sourcemaps
-*.map
+# TypeScript build info
+*.tsbuildinfo
 
 # obsidian
 data.json
