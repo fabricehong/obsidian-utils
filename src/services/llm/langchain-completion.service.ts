@@ -82,11 +82,8 @@ export class LangChainCompletionService implements AICompletionService {
         this.validateModel();
 
         try {
-            // Convertir les messages au format LangChain
-            const langchainMessages = messages.map(msg => ({
-                role: msg.role,
-                content: msg.content
-            }));
+            // Convertir les messages au format LangChain (comme dans generateTextResponse)
+            const langchainMessages = this.convertMessages(messages);
 
             // Utiliser withStructuredOutput avec le type générique
             const modelWithStructure = this.model!.withStructuredOutput<T>(schema);
